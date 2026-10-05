@@ -3,4 +3,9 @@ pydantic
 ipykernel
 tzdata
 langchain-groq
+langchain-huggingface
+langchain-postgres
 python-dotenv
+sentence-transformers
+psycopg[binary]
+peft

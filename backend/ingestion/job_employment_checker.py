@@ -6,7 +6,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 from helpers.constants import EMPLOYMENT_TYPES, THESIS_EMPLOYMENT_TYPE_KEYWORDS
 from common.llm_service import get_groq
 from helpers.utils import list_to_str
-from models.employment_check import EmploymentCheck
+from dto.employment_check import EmploymentCheck
 
 from langchain_core.messages import SystemMessage, HumanMessage
 

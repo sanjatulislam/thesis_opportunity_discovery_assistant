@@ -4,7 +4,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from ingestion.job_fetcher import get_jobs
-from models.job_ad import JobAd
+from dto.job_ad import JobAd
 from helpers.utils import parse_datetime_isoformat, get_datetime_local, clean_text
 from ingestion.job_employment_checker import is_thesis_ad
 
@@ -66,9 +66,9 @@ def is_valid_ad(ad: dict) -> bool:
     return True
 
 
-def fetch_jobs(queries: list[str]) -> list[JobAd]:
+def fetch_jobs(queries: list[str], existing_job_ids: list[str]) -> list[JobAd]:
     all_ads: list[JobAd] = []
-    checked_ids: set[str] = set()
+    new_job_ids: set[str] = set()
 
     for query in queries:
         hits = get_jobs(query)
@@ -76,9 +76,10 @@ def fetch_jobs(queries: list[str]) -> list[JobAd]:
 
         for ad in hits:
             ad_id = ad.get("id")
-            if not ad_id or ad_id in checked_ids:
+            if not ad_id or (ad_id in new_job_ids) or (ad_id in existing_job_ids):
                 continue
-            checked_ids.add(ad_id)
+            
+            new_job_ids.add(ad_id)
 
             if is_valid_ad(ad):
                 normalized_ad = normalize(ad)
@@ -86,7 +87,7 @@ def fetch_jobs(queries: list[str]) -> list[JobAd]:
                 if normalized_ad:
                     all_ads.append(normalized_ad)
 
-    print(f"{len(checked_ids)} ads checked, {len(all_ads)} kept")
+    print(f"{len(new_job_ids)} ads checked, {len(all_ads)} kept")
 
     return all_ads
 
